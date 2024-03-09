@@ -1,7 +1,7 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
-from .models import Customer
+from .models import Customer, Supplier, Detail, Exclusion
 
 class SignupForm(UserCreationForm):
     email = forms.EmailField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Email Address'}))
@@ -47,3 +47,37 @@ class AddCustomerForm(forms.ModelForm):
 	class Meta:
 		model = Customer
 		exclude = ("user",)
+            
+# Create Add Supplier Form
+class AddSupplierForm(forms.ModelForm):
+    supplier_name = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Supplier Name", "class":"form-control"}), label="")
+    email = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Email", "class":"form-control"}), label="")
+    phone = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Phone", "class":"form-control"}), label="")
+    address = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Address", "class":"form-control"}), label="")
+    city = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"City", "class":"form-control"}), label="")
+    country = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Country", "class":"form-control"}), label="")
+    postcode = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Postcode", "class":"form-control"}), label="")
+    
+    class Meta:
+        model = Supplier
+        exclude = ("user",)
+		
+# Create Add Details Form
+class AddDetailForm(forms.ModelForm):
+    company_type = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Company Type e.g. Public, Private etc.", "class":"form-control"}), label="")
+    legal_form = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Legal Form", "class":"form-control"}), label="")
+    vat_no = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"VAT no.", "class":"form-control"}), label="")
+
+    class Meta:
+        model = Detail
+        exclude = ("user",)
+
+# Create Add Exclusions Form
+class AddExclusionForm(forms.ModelForm):
+    mandatory = forms.CharField(required=False, widget=forms.widgets.TextInput(attrs={"placeholder":"Mandatory Exclusion Details", "class":"form-control"}), label="")
+    discretionary = forms.CharField(required=False, widget=forms.widgets.TextInput(attrs={"placeholder":"Discretionary Exclusion Details", "class":"form-control"}), label="")
+    exclusion_date = forms.DateField(required=False, widget=forms.widgets.TextInput(attrs={"placeholder":"Date of Exclusion", "class":"form-control"}), label="")
+	
+    class Meta:
+        model = Exclusion
+        exclude = ("user",)

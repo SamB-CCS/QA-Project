@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .forms import SignupForm, AddCustomerForm
+from .forms import SignupForm, AddCustomerForm, AddSupplierForm, AddDetailForm, AddExclusionForm
 from .models import Customer
 
 
@@ -73,11 +73,51 @@ def add_customer(request):
             if form.is_valid():
                 add_record = form.save()
                 messages.success(request, "Record Added...")
-                return redirect('home')
+                return redirect('add_supplier')
         return render(request, 'add_customer.html', {'form':form})
     else:
         messages.success(request, "You Must Be Logged In...")
         return redirect('home')
+    
+def add_supplier(request):
+    form = AddSupplierForm(request.POST or None)
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            if form.is_valid():
+                add_record = form.save()
+                messages.success(request, "Record Added...")
+                return redirect('add_detail')
+        return render(request, 'add_supplier.html', {'form':form})
+    else:
+        messages.success(request, "You Must Be Logged In...")
+        return redirect('home')
+    
+def add_detail(request):
+    form = AddDetailForm(request.POST or None)
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            if form.is_valid():
+                add_record = form.save()
+                messages.success(request, "Record Added...")
+                return redirect('add_exclusion')
+        return render(request, 'add_detail.html', {'form':form})
+    else:
+        messages.success(request, "You Must Be Logged In...")
+        return redirect('home')
+    
+def add_exclusion(request):
+    form = AddExclusionForm(request.POST or None)
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            if form.is_valid():
+                add_record = form.save()
+                messages.success(request, "Record Added...")
+                return redirect('home')
+        return render(request, 'add_exclusion.html', {'form':form})
+    else:
+        messages.success(request, "You Must Be Logged In...")
+        return redirect('home')
+    
 
 def update_customer(request, pk):
     if request.user.is_authenticated:
