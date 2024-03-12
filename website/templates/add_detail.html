@@ -8,10 +8,12 @@
     <form method="POST" action="{% url 'add_detail' %}">
         {% csrf_token %}
     
-        {{ form.as_p }}
+        <!--{{ form.as_p }}-->
+        {{ wizard.management_form }}
+        {{ wizard.form.as_p }}
     
     <br/>
-      <button type="submit" class="btn btn-secondary">Add Details</button>
+      <button type="submit" value="Next" class="btn btn-secondary">Next</button>
        <a href="{% url 'home' %}" class="btn btn-secondary">Back</a>
     
     </form>

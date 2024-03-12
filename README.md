@@ -14,8 +14,13 @@ pip install django
 
 ## Usage
 
+Next, install formtools
+
 ```bash
 add setup steps for django and to get the application working
+
+pip install django-formtools
+```
 
 
 ```

@@ -48,8 +48,14 @@
             </table>
 
         {% else %}
-        <div class ="col-lg-6 offset-md-3">
-        <h1>Login</h1>
+        <div class ="col-lg-7 offset-md-3">
+        <h1>Welcome to Sam B's SRM System</h1>
+        <br/>
+        <p>Manage your supplier relationships efficiently the Sam B way!</p>
+        <p>If already registered please log in below</p>
+        <main class="container my-4">
+          <h2>Login</h2>
+        </main>
         <br/>
         <form method="POST" action="{% url 'home' %}">
             {% csrf_token %}
