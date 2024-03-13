@@ -4,6 +4,7 @@ from django import forms
 from .models import Customer, Supplier, Detail, Exclusion
 from django.core.validators import RegexValidator
 
+
 class SignupForm(UserCreationForm):
     email = forms.EmailField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Email Address'}))
     first_name = forms.CharField(label="", max_length=30, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'First Name'}))
@@ -40,8 +41,9 @@ class SignupForm(UserCreationForm):
 # Form field validators
 letter_validator = RegexValidator(r'^[a-zA-Z]+$', 'Only letters are allowed.')
 alphanumeric_validator = RegexValidator(r'^[\w\s]+$', 'Only alphanumeric characters and spaces are allowed.')
-phone_validator = RegexValidator(r'^\+?[0-9]+$', 'Enter a valid phone number.')
-postcode_validator = RegexValidator(r'^[A-Za-z0-9\s]+$', 'Enter a valid postcode.')
+phone_validator = RegexValidator(r'^[+]?(?:[0-9\-\(\)\/\.]\s?){6,15}[0-9]{1}$', 'Enter a valid phone number.')
+postcode_validator = RegexValidator(r'^[a-z0-9][a-z0-9\- ]{0,10}[a-z0-9]$', 'Enter a valid postcode.')
+vat_validator = RegexValidator(r'^GB[0-9]{9}([0-9]{3})?$', 'Enter a valid GB VAT number. e.g. GB123456789')
 
 # Create Add Customer Form
 class AddCustomerForm(forms.ModelForm):
@@ -77,7 +79,7 @@ class AddCustomerForm(forms.ModelForm):
 # Create Add Supplier Form
 class AddSupplierForm(forms.ModelForm):
     supplier_name = forms.CharField(required=True, validators=[letter_validator], widget=forms.widgets.TextInput(attrs={"placeholder":"Supplier Name", "class":"form-control"}), label="")
-    supplier_email = forms.EmailField(required=True, validators=[letter_validator], widget=forms.widgets.TextInput(attrs={"placeholder":"Supplier Email", "class":"form-control"}), label="")
+    supplier_email = forms.EmailField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Supplier Email", "class":"form-control"}), label="")
     # fix typo on models.py and this variable to supplier
     supllier_phone = forms.CharField(required=True, validators=[phone_validator], widget=forms.widgets.TextInput(attrs={"placeholder":"Supplier Phone", "class":"form-control"}), label="")
     supplier_address = forms.CharField(required=True, validators=[alphanumeric_validator], widget=forms.widgets.TextInput(attrs={"placeholder":"Supplier Address", "class":"form-control"}), label="")
@@ -106,7 +108,7 @@ class AddDetailForm(forms.ModelForm):
 
     company_type = forms.ChoiceField(required=True, widget=forms.widgets.Select(attrs={"placeholder":"Company Type e.g. Agricultural etc.", "class":"form-control"}), choices = Detail.COMPANY_TYPE, label="")
     legal_form = forms.ChoiceField(required=True, widget=forms.widgets.Select(attrs={"placeholder":"Legal Form e.g. Public, Private etc.", "class":"form-control"}), choices = Detail.LEGAL_FORM, label="")
-    vat_no = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"VAT no.", "class":"form-control"}), label="")
+    vat_no = forms.CharField(required=True, validators=[vat_validator], widget=forms.widgets.TextInput(attrs={"placeholder":"VAT no.", "class":"form-control"}), label="")
 
     class Meta:
         model = Detail

@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
-from django.contrib import messages
+from django.contrib import messages, admin
 from .forms import SignupForm, AddCustomerForm, AddSupplierForm, AddDetailForm, AddExclusionForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from formtools.wizard.views import SessionWizardView
-from .models import Customer
+from .models import Customer, Supplier, Detail, Exclusion
 
 
 def home(request):
@@ -25,9 +25,14 @@ def home(request):
 
 
 def user_logout(request):
-    logout(request)
-    messages.success(request, "You have been logged out...")
-    return redirect('home')
+    if request.method == 'POST':
+        if 'confirm_logout' in request.POST:
+            logout(request)
+            messages.success(request, "You have been logged out...")
+            return redirect('home')
+    
+    return render(request, 'logout_confirm.html')
+
 
 def register_user(request):
     if request.method == "POST":
@@ -50,20 +55,23 @@ def register_user(request):
 def customer_record(request, pk):
     if request.user.is_authenticated:
         customer_record = Customer.objects.get(id=pk)
-        return render(request, 'customer.html', {'customer_record':customer_record})
+        suppliers = Supplier.objects.filter(customer_id=customer_record)
+        details = []
+        exclusions = []
+        for supplier in suppliers:
+            detail = Detail.objects.filter(supplier_id=supplier).first()
+            exclusion = Exclusion.objects.filter(supplier_id=supplier).first()
+            details.append(detail)
+            exclusions.append(exclusion)
+        return render(request, 'customer.html', {
+            'customer_record': customer_record,
+            'suppliers': suppliers,
+            'details': details,
+            'exclusions': exclusions,
+        })
     else:
         messages.success(request, "You must be logged in to view details")
-        return redirect ('home')
-    
-def delete_customer(request, pk):
-    if request.user.is_authenticated:
-        delete_cust = Customer.objects.get(id=pk)
-        delete_cust.delete()
-        messages.success(request, "This has been successfully deleted")
-        return redirect ('home')
-    else:
-        messages.success(request, "You must be logged in to view details")
-        return redirect ('home')
+        return redirect('home')
     
 def update_customer(request, pk):
     if request.user.is_authenticated:
@@ -77,7 +85,51 @@ def update_customer(request, pk):
     else:
         messages.success(request, "You Must Be Logged In...")
         return redirect('home')
-
+    
+def update_supplier(request, pk):
+    if request.user.is_authenticated:
+        update_supp = Supplier.objects.get(id=pk)  
+        form = AddSupplierForm(request.POST or None, instance=update_supp)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Supplier has been updated!")
+            session_keys_to_remove = ['customer', 'supplier']
+            session = request.session
+            for key in session_keys_to_remove:
+                if key in session:
+                    del session[key]
+            session.modified = True
+            return redirect('home')
+        return render(request, 'update_supplier.html', {'form':form})
+    else:
+        messages.success(request, "You Must Be Logged In...")
+        return redirect('home')
+    
+def update_detail(request, pk):
+    if request.user.is_authenticated:
+        update_det = Detail.objects.get(id=pk)  
+        form = AddDetailForm(request.POST or None, instance=update_det)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Details have been updated!")
+            return redirect('home')
+        return render(request, 'update_detail.html', {'form':form})
+    else:
+        messages.success(request, "You Must Be Logged In...")
+        return redirect('home')
+    
+def update_exclusion(request, pk):
+    if request.user.is_authenticated:
+        update_excl = Exclusion.objects.get(id=pk)  
+        form = AddExclusionForm(request.POST or None, instance=update_excl)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Exclusions have been updated!")
+            return redirect('home')
+        return render(request, 'update_exclusion.html', {'form':form})
+    else:
+        messages.success(request, "You Must Be Logged In...")
+        return redirect('home')
     
 FORMS = [("customer", AddCustomerForm),
         ("supplier", AddSupplierForm),
@@ -94,7 +146,7 @@ class MyWizardView(LoginRequiredMixin, SessionWizardView):
     form_list = FORMS
     templates = TEMPLATES  
 
-    def get_template_names(self,):
+    def get_template_names(self):
         return [TEMPLATES[self.steps.current]]
     
     def done(self, form_list, **kwargs):
@@ -129,57 +181,3 @@ class MyWizardView(LoginRequiredMixin, SessionWizardView):
                         del session[key]
                 session.modified = True
                 return redirect('home')           
-
-
-# Old functions delete once form session data  refactoring completed
-# def add_customer(request):
-#     form = AddCustomerForm(request.POST or None)
-#     if request.user.is_authenticated:
-#         if request.method == "POST":
-#             if form.is_valid():
-#                 add_record = form.save()
-#                 messages.success(request, "Record Added...")
-#                 return redirect('add_supplier')
-#         return render(request, 'add_customer.html', {'form':form})
-#     else:
-#         messages.success(request, "You Must Be Logged In...")
-#         return redirect('home')
-
-# def add_supplier(request):
-#     form = AddSupplierForm(request.POST or None)
-#     if request.user.is_authenticated:
-#         if request.method == "POST":
-#             if form.is_valid():
-#                 add_record = form.save()
-#                 messages.success(request, "Record Added...")
-#                 return redirect('add_detail')
-#         return render(request, 'add_supplier.html', {'form':form})
-#     else:
-#         messages.success(request, "You Must Be Logged In...")
-#         return redirect('home')
-    
-# def add_detail(request):
-#     form = AddDetailForm(request.POST or None)
-#     if request.user.is_authenticated:
-#         if request.method == "POST":
-#             if form.is_valid():
-#                 add_record = form.save()
-#                 messages.success(request, "Record Added...")
-#                 return redirect('add_exclusion')
-#         return render(request, 'add_detail.html', {'form':form})
-#     else:
-#         messages.success(request, "You Must Be Logged In...")
-#         return redirect('home')
-    
-# def add_exclusion(request):
-#     form = AddExclusionForm(request.POST or None)
-#     if request.user.is_authenticated:
-#         if request.method == "POST":
-#             if form.is_valid():
-#                 add_record = form.save()
-#                 messages.success(request, "Record Added...")
-#                 return redirect('home')
-#         return render(request, 'add_exclusion.html', {'form':form})
-#     else:
-#         messages.success(request, "You Must Be Logged In...")
-#         return redirect('home')
