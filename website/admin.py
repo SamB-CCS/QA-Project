@@ -5,3 +5,4 @@ admin.site.register(Customer)
 admin.site.register(Supplier)
 admin.site.register(Detail)
 admin.site.register(Exclusion)
+

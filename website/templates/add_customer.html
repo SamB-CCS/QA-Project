@@ -8,16 +8,22 @@
     <form method="POST" action="{% url 'add_customer' %}">
         {% csrf_token %}
     
-        <!--{{ form.as_p }}-->
         {{ wizard.management_form }}
         {{ wizard.form.as_p }}
     
     <br/>
-      <button type="submit" value="Next" class="btn btn-secondary">Next</button>
-       <a href="{% url 'home' %}" class="btn btn-secondary">Back</a>
-    
+      <button type="submit" value="Next" class="btn btn-primary">Next</button>
+       <a href="{% url 'home' %}" id="backToHome" class="btn btn-danger">Back to Home</a>
     </form>
     
 </div>
+
+<script>
+    document.getElementById('backToHome').addEventListener('click', function(e) {
+        if (!confirm('Are you sure you want to leave? All form data will be lost.')) {
+            e.preventDefault();
+        }
+});
+</script>
 
 {% endblock %}

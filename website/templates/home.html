@@ -2,7 +2,7 @@
 
 {% block content %}
 
-    <div class ="col-lg-10 offset-md-1">
+    <div class ="col-md-10 offset-md-1">
 
         {% if user.is_authenticated %}
 
@@ -51,9 +51,10 @@
 
         {% else %}
         <div class ="col-lg-7 offset-md-3">
-        <h1>Welcome to Sam B's SRM System</h1>
+        <h1>Welcome to the Supplier Relationship Management System</h1>
         <br/>
-        <p>Manage your supplier relationships efficiently the Sam B way!</p>
+        <p class="lead">Manage your supplier relationships efficiently!</p>
+        <br/>
         <p>If already registered please log in below</p>
         <main class="container my-4">
           <h2>Login</h2>

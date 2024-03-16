@@ -1,12 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
-from django.contrib import messages, admin
+from django.contrib import messages
 from .forms import SignupForm, AddCustomerForm, AddSupplierForm, AddDetailForm, AddExclusionForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from formtools.wizard.views import SessionWizardView
 from .models import Customer, Supplier, Detail, Exclusion
 
-
+# Login method
 def home(request):
     customers = Customer.objects.all()
     if request.method =="POST":
@@ -23,7 +23,7 @@ def home(request):
     else:    
         return render(request, 'home.html', {'customers':customers})
 
-
+# Logout method and logout confirmation
 def user_logout(request):
     if request.method == 'POST':
         if 'confirm_logout' in request.POST:
@@ -33,7 +33,7 @@ def user_logout(request):
     
     return render(request, 'logout_confirm.html')
 
-
+# Register method
 def register_user(request):
     if request.method == "POST":
         form = SignupForm(request.POST)
@@ -52,6 +52,7 @@ def register_user(request):
         
     return render(request, 'register.html', {'form':form})
 
+# Displays all related customer details
 def customer_record(request, pk):
     if request.user.is_authenticated:
         customer_record = Customer.objects.get(id=pk)
@@ -72,7 +73,8 @@ def customer_record(request, pk):
     else:
         messages.success(request, "You must be logged in to view details")
         return redirect('home')
-    
+
+# Allows user to amend/update existing customer data fields    
 def update_customer(request, pk):
     if request.user.is_authenticated:
         update_cust = Customer.objects.get(id=pk)
@@ -85,7 +87,8 @@ def update_customer(request, pk):
     else:
         messages.success(request, "You Must Be Logged In...")
         return redirect('home')
-    
+
+# Allows user to amend/update existing supplier data fields    
 def update_supplier(request, pk):
     if request.user.is_authenticated:
         update_supp = Supplier.objects.get(id=pk)  
@@ -104,7 +107,8 @@ def update_supplier(request, pk):
     else:
         messages.success(request, "You Must Be Logged In...")
         return redirect('home')
-    
+
+# Allows user to amend/update existing detail data fields        
 def update_detail(request, pk):
     if request.user.is_authenticated:
         update_det = Detail.objects.get(id=pk)  
@@ -117,7 +121,8 @@ def update_detail(request, pk):
     else:
         messages.success(request, "You Must Be Logged In...")
         return redirect('home')
-    
+
+# Allows user to amend/update existing exclusion data fields        
 def update_exclusion(request, pk):
     if request.user.is_authenticated:
         update_excl = Exclusion.objects.get(id=pk)  
@@ -130,7 +135,8 @@ def update_exclusion(request, pk):
     else:
         messages.success(request, "You Must Be Logged In...")
         return redirect('home')
-    
+
+# Form and Template dict and tuple    
 FORMS = [("customer", AddCustomerForm),
         ("supplier", AddSupplierForm),
         ("detail", AddDetailForm),
@@ -141,6 +147,8 @@ TEMPLATES = {"customer": "add_customer.html",
             "detail": "add_detail.html",
             "exclusion": "add_exclusion.html"}
 
+
+# WizardView class to handle session data between the various forms and pass model instances into relevant forms
 class MyWizardView(LoginRequiredMixin, SessionWizardView):
 
     form_list = FORMS
@@ -155,25 +163,24 @@ class MyWizardView(LoginRequiredMixin, SessionWizardView):
                     if form.prefix == 'customer':
                         customer_instance = form.save()
                         self.request.session['customer'] = customer_instance
-                        messages.success(self.request, f"{form.prefix} Added...")
+                        messages.success(self.request, f"{form.prefix} added...")
                     elif form.prefix == 'supplier':  
                         customer = self.request.session.get('customer')
                         if customer: 
                             form.instance.customer_id = customer
                             customer_instance = form.save()
                             self.request.session['supplier'] = customer_instance
-                            messages.success(self.request, f"{form.prefix} Added...")
+                            messages.success(self.request, f"{form.prefix} added...")
                     elif form.prefix == 'detail' or 'exclusion':
                         supplier = self.request.session.get('supplier')
                         if supplier: 
                             form.instance.supplier_id = supplier
                             customer_instance = form.save()
-                            messages.success(self.request, f"{form.prefix} Added...")                            
+                            messages.success(self.request, f"{form.prefix} added...")                            
                     else:
                         messages.error(self.request, f"{form.prefix} form has errors.")
                         return self.render_goto_step(step=self.steps.current)
-                            #pass
-                
+                # Delete form session keys before returning to the home page
                 session_keys_to_remove = ['customer', 'supplier']
                 session = self.request.session
                 for key in session_keys_to_remove:

@@ -3,6 +3,9 @@ from django.contrib import admin
 from . import views
 from .views import MyWizardView
 
+admin.site.site_header = 'Supplier Relationship Management System Admin'
+
+# URL paths for web application
 urlpatterns = [
     path('', views.home, name='home'),
     path('logout/', views.user_logout, name='logout'),

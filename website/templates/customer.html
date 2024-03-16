@@ -35,7 +35,7 @@
           <br/>
           <p class="card-text">      
             <strong>Email: </strong>{{ supplier.supplier_email }}<br/>
-            <strong>Phone: </strong>{{ supplier.supllier_phone }}<br/>
+            <strong>Phone: </strong>{{ supplier.supplier_phone }}<br/>
             <strong>Address: </strong>{{ supplier.supplier_address }}<br/>
             <strong>City: </strong>{{ supplier.supplier_city }}<br/>
             <strong>Country: </strong>{{ supplier.supplier_country }}<br/>
@@ -62,6 +62,7 @@
           <strong>Market Type: </strong>{{ detail.company_type }}<br/>
           <strong>Legal Form: </strong>{{ detail.legal_form }}<br/>
           <strong>VAT Number: </strong>{{ detail.vat_no }}<br/>
+          <strong>Created At: </strong>{{ detail.created_at }}<br/>
           <strong>ID: </strong>{{ detail.id }}<br/>
         </p>
         <a href="{% url 'update_detail' detail.id %}" class="btn btn-secondary">Update</a>
@@ -81,6 +82,7 @@
         <strong>Mandatory: </strong>{{ exclusion.mandatory }}<br/>
         <strong>Discretionary: </strong>{{ exclusion.discretionary }}<br/>
         <strong>Date of exclusion: </strong>{{ exclusion.exclusion_date }}<br/>
+        <strong>Created At: </strong>{{ exclusion.created_at }}<br/>
         <strong>ID: </strong>{{ exclusion.id }}<br/>
       </p>
       <a href="{% url 'update_exclusion' exclusion.id %}" class="btn btn-secondary">Update</a>
