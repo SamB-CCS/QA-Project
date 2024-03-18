@@ -1,41 +1,52 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .forms import SignupForm, AddCustomerForm, AddSupplierForm, AddDetailForm, AddExclusionForm
+from .forms import (
+    SignupForm,
+    AddCustomerForm,
+    AddSupplierForm,
+    AddDetailForm,
+    AddExclusionForm,
+)
 from django.contrib.auth.mixins import LoginRequiredMixin
 from formtools.wizard.views import SessionWizardView
 from .models import Customer, Supplier, Detail, Exclusion
 import logging
 
-logger = logging.getLogger('django')
+logger = logging.getLogger("django")
+
 
 # Login method
 def home(request):
     customers = Customer.objects.all()
-    if request.method =="POST":
-        username = request.POST['username']
-        password = request.POST['password']
+    if request.method == "POST":
+        username = request.POST["username"]
+        password = request.POST["password"]
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
             messages.success(request, "You are logged in!")
-            return redirect('home')
+            return redirect("home")
         else:
             logger.error(f"Failed login attempt with username: {username}")
-            messages.success(request, "Incorrect email or password, please try again...")
-            return redirect('home')
-    else:    
-        return render(request, 'home.html', {'customers':customers})
+            messages.success(
+                request, "Incorrect email or password, please try again..."
+            )
+            return redirect("home")
+    else:
+        return render(request, "home.html", {"customers": customers})
+
 
 # Logout method and logout confirmation
 def user_logout(request):
-    if request.method == 'POST':
-        if 'confirm_logout' in request.POST:
+    if request.method == "POST":
+        if "confirm_logout" in request.POST:
             logout(request)
             messages.success(request, "You have been logged out...")
-            return redirect('home')
-    
-    return render(request, 'logout_confirm.html')
+            return redirect("home")
+
+    return render(request, "logout_confirm.html")
+
 
 # Register method
 def register_user(request):
@@ -44,17 +55,18 @@ def register_user(request):
         if form.is_valid():
             form.save()
             # Authenticate & Login
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password1']
+            username = form.cleaned_data["username"]
+            password = form.cleaned_data["password1"]
             user = authenticate(username=username, password=password)
             login(request, user)
             messages.success(request, "You have successfully registered your details!")
-            return redirect ('home')
+            return redirect("home")
     else:
         form = SignupForm()
-        return render(request, 'register.html', {'form':form})
-        
-    return render(request, 'register.html', {'form':form})
+        return render(request, "register.html", {"form": form})
+
+    return render(request, "register.html", {"form": form})
+
 
 # Displays all related customer details
 def customer_record(request, pk):
@@ -68,18 +80,23 @@ def customer_record(request, pk):
             exclusion = Exclusion.objects.filter(supplier_id=supplier).first()
             details.append(detail)
             exclusions.append(exclusion)
-        return render(request, 'customer.html', {
-            'customer_record': customer_record,
-            'suppliers': suppliers,
-            'details': details,
-            'exclusions': exclusions,
-        })
+        return render(
+            request,
+            "customer.html",
+            {
+                "customer_record": customer_record,
+                "suppliers": suppliers,
+                "details": details,
+                "exclusions": exclusions,
+            },
+        )
     else:
         logger.error(f"User not logged in to view customer record {pk}")
         messages.success(request, "You must be logged in to view details")
-        return redirect('home')
+        return redirect("home")
 
-# Allows user to amend/update existing customer data fields    
+
+# Allows user to amend/update existing customer data fields
 def update_customer(request, pk):
     if request.user.is_authenticated:
         update_cust = Customer.objects.get(id=pk)
@@ -87,113 +104,120 @@ def update_customer(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, "Customer has been updated!")
-            return redirect('home')
-        return render(request, 'update_customer.html', {'form':form})
+            return redirect("home")
+        return render(request, "update_customer.html", {"form": form})
     else:
         logger.error(f"User not logged in to view update customer {pk}")
         messages.success(request, "You must be logged In to view details")
-        return redirect('home')
+        return redirect("home")
 
-# Allows user to amend/update existing supplier data fields    
+
+# Allows user to amend/update existing supplier data fields
 def update_supplier(request, pk):
     if request.user.is_authenticated:
-        update_supp = Supplier.objects.get(id=pk)  
+        update_supp = Supplier.objects.get(id=pk)
         form = AddSupplierForm(request.POST or None, instance=update_supp)
         if form.is_valid():
             form.save()
             messages.success(request, "Supplier has been updated!")
-            session_keys_to_remove = ['customer', 'supplier']
+            session_keys_to_remove = ["customer", "supplier"]
             session = request.session
             for key in session_keys_to_remove:
                 if key in session:
                     del session[key]
             session.modified = True
-            return redirect('home')
-        return render(request, 'update_supplier.html', {'form':form})
+            return redirect("home")
+        return render(request, "update_supplier.html", {"form": form})
     else:
         logger.error(f"User not logged in to view update supplier {pk}")
         messages.success(request, "You must be logged In to view details")
-        return redirect('home')
+        return redirect("home")
 
-# Allows user to amend/update existing detail data fields        
+
+# Allows user to amend/update existing detail data fields
 def update_detail(request, pk):
     if request.user.is_authenticated:
-        update_det = Detail.objects.get(id=pk)  
+        update_det = Detail.objects.get(id=pk)
         form = AddDetailForm(request.POST or None, instance=update_det)
         if form.is_valid():
             form.save()
             messages.success(request, "Details have been updated!")
-            return redirect('home')
-        return render(request, 'update_detail.html', {'form':form})
+            return redirect("home")
+        return render(request, "update_detail.html", {"form": form})
     else:
         logger.error(f"User not logged in to view update details {pk}")
         messages.success(request, "You must be logged in to view details")
-        return redirect('home')
+        return redirect("home")
 
-# Allows user to amend/update existing exclusion data fields        
+
+# Allows user to amend/update existing exclusion data fields
 def update_exclusion(request, pk):
     if request.user.is_authenticated:
-        update_excl = Exclusion.objects.get(id=pk)  
+        update_excl = Exclusion.objects.get(id=pk)
         form = AddExclusionForm(request.POST or None, instance=update_excl)
         if form.is_valid():
             form.save()
             messages.success(request, "Exclusions have been updated!")
-            return redirect('home')
-        return render(request, 'update_exclusion.html', {'form':form})
+            return redirect("home")
+        return render(request, "update_exclusion.html", {"form": form})
     else:
         logger.error(f"User not logged in to view update exclusions {pk}")
         messages.success(request, "You must be logged in to view details")
-        return redirect('home')
+        return redirect("home")
 
-# Form and Template dict and tuple    
-FORMS = [("customer", AddCustomerForm),
-        ("supplier", AddSupplierForm),
-        ("detail", AddDetailForm),
-        ("exclusion", AddExclusionForm)]
 
-TEMPLATES = {"customer": "add_customer.html",
-            "supplier": "add_supplier.html",
-            "detail": "add_detail.html",
-            "exclusion": "add_exclusion.html"}
+# Form and Template dict and tuple
+FORMS = [
+    ("customer", AddCustomerForm),
+    ("supplier", AddSupplierForm),
+    ("detail", AddDetailForm),
+    ("exclusion", AddExclusionForm),
+]
+
+TEMPLATES = {
+    "customer": "add_customer.html",
+    "supplier": "add_supplier.html",
+    "detail": "add_detail.html",
+    "exclusion": "add_exclusion.html",
+}
 
 
 # WizardView class to handle session data between the various forms and pass model instances into relevant forms
 class MyWizardView(LoginRequiredMixin, SessionWizardView):
-
     form_list = FORMS
-    templates = TEMPLATES  
+    templates = TEMPLATES
 
     def get_template_names(self):
         return [TEMPLATES[self.steps.current]]
-    
+
     def done(self, form_list, **kwargs):
-                customer_instance = None
-                for form in form_list:
-                    if form.prefix == 'customer':
-                        customer_instance = form.save()
-                        self.request.session['customer'] = customer_instance
-                        messages.success(self.request, f"{form.prefix} added...")
-                    elif form.prefix == 'supplier':  
-                        customer = self.request.session.get('customer')
-                        if customer: 
-                            form.instance.customer_id = customer
-                            customer_instance = form.save()
-                            self.request.session['supplier'] = customer_instance
-                            messages.success(self.request, f"{form.prefix} added...")
-                    elif form.prefix == 'detail' or 'exclusion':
-                        supplier = self.request.session.get('supplier')
-                        if supplier: 
-                            form.instance.supplier_id = supplier
-                            customer_instance = form.save()
-                            messages.success(self.request, f"{form.prefix} added...")                            
-                    else:
-                        messages.error(self.request, f"{form.prefix} form has errors.")
-                        return self.render_goto_step(step=self.steps.current)
-                # Delete form session keys before returning to the home page
-                session_keys_to_remove = ['customer', 'supplier']
-                session = self.request.session
-                for key in session_keys_to_remove:
-                    if key in session:
-                        del session[key]
-                session.modified = True
-                return redirect('home')           
+        customer_instance = None
+        for form in form_list:
+            if form.prefix == "customer":
+                customer_instance = form.save()
+                self.request.session["customer"] = customer_instance
+                messages.success(self.request, f"{form.prefix} added...")
+            elif form.prefix == "supplier":
+                customer = self.request.session.get("customer")
+                if customer:
+                    form.instance.customer_id = customer
+                    customer_instance = form.save()
+                    self.request.session["supplier"] = customer_instance
+                    messages.success(self.request, f"{form.prefix} added...")
+            elif form.prefix == "detail" or "exclusion":
+                supplier = self.request.session.get("supplier")
+                if supplier:
+                    form.instance.supplier_id = supplier
+                    customer_instance = form.save()
+                    messages.success(self.request, f"{form.prefix} added...")
+            else:
+                messages.error(self.request, f"{form.prefix} form has errors.")
+                return self.render_goto_step(step=self.steps.current)
+        # Delete form session keys before returning to the home page
+        session_keys_to_remove = ["customer", "supplier"]
+        session = self.request.session
+        for key in session_keys_to_remove:
+            if key in session:
+                del session[key]
+        session.modified = True
+        return redirect("home")
