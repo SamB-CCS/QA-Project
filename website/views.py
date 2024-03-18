@@ -5,6 +5,9 @@ from .forms import SignupForm, AddCustomerForm, AddSupplierForm, AddDetailForm, 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from formtools.wizard.views import SessionWizardView
 from .models import Customer, Supplier, Detail, Exclusion
+import logging
+
+logger = logging.getLogger('django')
 
 # Login method
 def home(request):
@@ -18,6 +21,7 @@ def home(request):
             messages.success(request, "You are logged in!")
             return redirect('home')
         else:
+            logger.error(f"Failed login attempt with username: {username}")
             messages.success(request, "Incorrect email or password, please try again...")
             return redirect('home')
     else:    
@@ -71,6 +75,7 @@ def customer_record(request, pk):
             'exclusions': exclusions,
         })
     else:
+        logger.error(f"User not logged in to view customer record {pk}")
         messages.success(request, "You must be logged in to view details")
         return redirect('home')
 
@@ -85,7 +90,8 @@ def update_customer(request, pk):
             return redirect('home')
         return render(request, 'update_customer.html', {'form':form})
     else:
-        messages.success(request, "You Must Be Logged In...")
+        logger.error(f"User not logged in to view update customer {pk}")
+        messages.success(request, "You must be logged In to view details")
         return redirect('home')
 
 # Allows user to amend/update existing supplier data fields    
@@ -105,7 +111,8 @@ def update_supplier(request, pk):
             return redirect('home')
         return render(request, 'update_supplier.html', {'form':form})
     else:
-        messages.success(request, "You Must Be Logged In...")
+        logger.error(f"User not logged in to view update supplier {pk}")
+        messages.success(request, "You must be logged In to view details")
         return redirect('home')
 
 # Allows user to amend/update existing detail data fields        
@@ -119,7 +126,8 @@ def update_detail(request, pk):
             return redirect('home')
         return render(request, 'update_detail.html', {'form':form})
     else:
-        messages.success(request, "You Must Be Logged In...")
+        logger.error(f"User not logged in to view update details {pk}")
+        messages.success(request, "You must be logged in to view details")
         return redirect('home')
 
 # Allows user to amend/update existing exclusion data fields        
@@ -133,7 +141,8 @@ def update_exclusion(request, pk):
             return redirect('home')
         return render(request, 'update_exclusion.html', {'form':form})
     else:
-        messages.success(request, "You Must Be Logged In...")
+        logger.error(f"User not logged in to view update exclusions {pk}")
+        messages.success(request, "You must be logged in to view details")
         return redirect('home')
 
 # Form and Template dict and tuple    

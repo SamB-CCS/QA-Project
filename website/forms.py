@@ -35,7 +35,7 @@ class SignupForm(UserCreationForm):
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
-        if Customer.objects.filter(email=email).exists():
+        if User.objects.filter(email=email).exists():
             raise forms.ValidationError('This email address is already registered.')
         return email
         
@@ -131,7 +131,7 @@ class AddDetailForm(forms.ModelForm):
     class Meta:
         model = Detail
         exclude = ("user","supplier_id",)
-        
+
 # Capitalise strings before saving to databse model
         def clean_supplier_postcode(self):
             vat_no= self.cleaned_data.get('vat_no')

@@ -1,8 +1,12 @@
 from pathlib import Path
 from django.conf.locale.es import formats as es_formats
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+LOGS_DIR = os.path.join(BASE_DIR, 'app/logs')  # Replace with the desired path
+os.makedirs(LOGS_DIR, exist_ok=True)  # Create the logs directory if it doesn't exist
+
 
 
 # Quick-start development settings - unsuitable for production
@@ -121,5 +125,26 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = '/'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'ERROR',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(LOGS_DIR, 'error.log'),
+            'maxBytes': 1024 * 1024 * 5,  
+            'backupCount': 5,
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    },
+}
 
 
