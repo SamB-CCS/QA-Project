@@ -14,7 +14,7 @@ Before running this application, ensure you have the following installed:
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/SamB-CCS/QA-Project.git
+git clone https://github.com/SamB-CCS/QA-Project
 ```
 
 2. Navigate to the project directory:
