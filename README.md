@@ -2,32 +2,91 @@
 
 This website application is for the Software Engineering & Agile module of the DTS apprenticeship course. This application is a basic SRM that can collect data for suppliers that could be used by customers within a procurement organisation. Users can register, log in, create, read, and update data entries. Admin users have access to delete functionality too. 
 
-## Installation
+## Prerequisites
 
-First, ensure Python3 is installed
+Before running this application, ensure you have the following installed:
 
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install django.
+- Python (version 3.6 or later)
+- pip (Python package installer)
+- Git (version control)
 
+## Setup
+
+1. Clone the repository:
 ```bash
-pip install django
+git clone https://github.com/SamB-CCS/QA-Project.git
 ```
 
-## Usage
-
-Next, install formtools
-
+2. Navigate to the project directory:
 ```bash
-add setup steps for django and to get the application working
-
-pip install django-formtools
+cd QA-Project
 ```
 
-
+3. Create a virtual environment (recommended):
+```bash
+python -m venv env
 ```
 
+4. Activate the virtual environment:
+- On Windows:
+```bash
+env\Scripts\activate
+```
+- On Unix or macOS:
+```bash
+source env/bin/activate
+```
+
+5. Next, install the required packages:
+```bash
+pip install -r requirements.txt
+```
+
+6. Apply database migrations:
+```bash
+python manage.py migrate
+```
+7. Create a superuser (optional, but recommended for admin access):
+```bash
+python manage.py createsuperuser
+```
+Follow the prompts to set up a superuser account.
+
+## Configuration
+
+Before running the application, you may need to configure some settings. Open the `QA_Project/settings.py` file and adjust the following variables according to your needs:
+
+- `SECRET_KEY`: Set a secure secret key for your application.
+- `DEBUG`: Set to `False` in production environments.
+- `ALLOWED_HOSTS`: Add your domain or server IP address.
+- `DATABASES`: Configure your database settings.
+
+## Running the Application
+
+1. Start the development server:
+```bash
+python manage.py runserver
+```
+2. Open your web browser and navigate to `http://localhost:8000` to access the application.
+
+## Running Tests
+
+To run the test suite, use the following command:
+```bash
+python manage.py test
+```
 ## Contributing
 
-Pull requests are welcome. For major changes, please open an issue first
-to discuss what you would like to change.
+If you'd like to contribute to this project, please follow these steps:
 
-Please make sure to update tests as appropriate.
+1. Fork the repository.
+2. Create a new branch for your feature or bug fix.
+3. Make your changes and commit them with descriptive commit messages.
+4. Push your changes to your forked repository.
+5. Create a pull request, and we'll review your changes.
+
+## Acknowledgments
+
+- [Django](https://www.djangoproject.com/)
+- [Python](https://www.python.org/)
+- [pip][https://pypi.org/project/pip/]
