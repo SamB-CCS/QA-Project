@@ -89,4 +89,4 @@ If you'd like to contribute to this project, please follow these steps:
 
 - [Django](https://www.djangoproject.com/)
 - [Python](https://www.python.org/)
-- [pip] (https://pypi.org/project/pip/)
+- [Pip](https://pypi.org/project/pip/)
