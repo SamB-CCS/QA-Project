@@ -6,7 +6,7 @@ This website application is for the Software Engineering & Agile module of the D
 
 Before running this application, ensure you have the following installed:
 
-- Python (version 3.6 or later)
+- Python (version 3.11.7)
 - pip (Python package installer)
 - Git (version control)
 
@@ -14,7 +14,7 @@ Before running this application, ensure you have the following installed:
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/SamB-CCS/QA-Project.git
+git clone https://github.com/SamB-CCS/QA-Project
 ```
 
 2. Navigate to the project directory:
