@@ -313,10 +313,10 @@ class AddDetailForm(forms.ModelForm):
             "supplier_id",
         )
 
-        # Capitalise strings before saving to databse model
-        def clean_supplier_postcode(self):
-            vat_no = self.cleaned_data.get("vat_no")
-            return vat_no.upper()
+    # Capitalise strings before saving to database model
+    def clean_vat_no(self):
+        vat_no = self.cleaned_data.get("vat_no")
+        return vat_no.upper()
 
 
 # Create Add Exclusions Form
