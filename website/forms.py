@@ -85,7 +85,7 @@ postcode_validator = RegexValidator(
     "Enter a valid postcode/zipcode e.g. N1 1AD.",
 )
 vat_validator = RegexValidator(
-    r"^GB|gb[0-9]{9}([0-9]{3})?$",
+    r"^[Gg][Bb][0-9]{9}([0-9]{3})?$",
     "Enter a valid UK VAT number, GB followed by nine numbers e.g. GB123456789",
 )
 
