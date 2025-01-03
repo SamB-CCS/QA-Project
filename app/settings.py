@@ -118,6 +118,13 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 LOGIN_URL = "/"
 
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django.core.framework.cache.backends.locmem.LocMemCache',
+#         'LOCATION': 'unique-snowflake',
+#     }
+# }
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
